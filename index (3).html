@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Jawaban</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #fef6f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 3rem;
+    }
+
+    .moe-gif {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 8px;
+      animation: bounce 1.4s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #d45a8a;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #c48fa8;
+      margin-bottom: 1.8rem;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #f79ab5;
+      margin-right: 4px;
+      vertical-align: middle;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      border: 2px solid #f7c6d8;
+      padding: 1.8rem 1.6rem;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .field { margin-bottom: 1.2rem; }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #d45a8a;
+      margin-bottom: 6px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: #fff6fa;
+      border: 1.5px solid #f0b8ce;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      color: #5c3d4a;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: #d45a8a;
+      background: #fff;
+    }
+
+    textarea {
+      height: 110px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      background: #ffb6c1;
+      color: #6b1f3c;
+      border: none;
+      border-radius: 14px;
+      padding: 13px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.4rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover { background: #f79ab5; }
+    button:active { transform: scale(0.97); }
+    button:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .success {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 0 1rem;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .success-icon { font-size: 2.5rem; }
+
+    .success-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #d45a8a;
+    }
+
+    .success-sub {
+      font-size: 0.85rem;
+      color: #c48fa8;
+    }
+
+    .hearts-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      display: none;
+    }
+
+    .heart {
+      position: absolute;
+      bottom: -30px;
+      animation: floatUp 2.2s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+      to { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <img src="logo.gif" alt="mascot" class="moe-gif">
+  <h1>Submit Jawaban</h1>
+  <p class="subtitle"><span class="status-dot"></span>Form aktif — isi dan kirim ya!</p>
+
+  <div class="card">
+    <div id="form-area">
+      <div class="field">
+        <label for="nama">Nama</label>
+        <input type="text" id="nama" placeholder="Nama kamu...">
+      </div>
+      <div class="field">
+        <label for="jawaban">Jawaban</label>
+        <textarea id="jawaban" placeholder="Tulis jawaban kamu di sini..."></textarea>
+      </div>
+      <div class="field">
+        <label for="pesan">Pesan (opsional)</label>
+        <input type="text" id="pesan" placeholder="Mau bilang apa ke bu/pak guru?">
+      </div>
+      <button id="submit-btn" onclick="submitForm()">Kirim Jawaban 🌸</button>
+    </div>
+
+    <div class="success" id="success-area">
+      <div class="success-icon">🎉</div>
+      <div class="success-text">Jawaban terkirim!</div>
+      <div class="success-sub">Makasih ya, semangat terus~</div>
+    </div>
+  </div>
+
+  <div class="hearts-container" id="hearts"></div>
+
+  <script>
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyt5lVKg0LEupFTqzfTF-DIB_yrB8dsGn0jPeIksnuizfVl8LukXAGNRGPD3pxnMQbe/exec';
+
+    function spawnHearts() {
+      const container = document.getElementById('hearts');
+      container.style.display = 'block';
+      const emojis = ['🩷','💕','✨','🌸','💖','⭐'];
+      for (let i = 0; i < 20; i++) {
+        const h = document.createElement('div');
+        h.className = 'heart';
+        h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        h.style.left = Math.random() * 100 + 'vw';
+        h.style.animationDelay = (Math.random() * 1.2) + 's';
+        h.style.fontSize = (0.9 + Math.random() * 0.9) + 'rem';
+        container.appendChild(h);
+      }
+      setTimeout(() => {
+        container.style.display = 'none';
+        container.innerHTML = '';
+      }, 3000);
+    }
+
+    function submitForm() {
+      const nama = document.getElementById('nama').value.trim();
+      const jawaban = document.getElementById('jawaban').value.trim();
+      const pesan = document.getElementById('pesan').value.trim();
+      const btn = document.getElementById('submit-btn');
+
+      if (!nama || !jawaban) {
+        btn.textContent = 'Nama & jawaban wajib diisi! 🙈';
+        btn.style.background = '#f0b8ce';
+        setTimeout(() => {
+          btn.textContent = 'Kirim Jawaban 🌸';
+          btn.style.background = '';
+        }, 2000);
+        return;
+      }
+
+      btn.textContent = 'Mengirim...';
+      btn.disabled = true;
+
+      const formData = new FormData();
+      formData.append('nama', nama);
+      formData.append('jawaban', jawaban);
+      formData.append('pesan', pesan);
+
+      fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData })
+        .then(() => showSuccess())
+        .catch(() => showSuccess()); // tetap tampil sukses meski CORS error
+    }
+
+    function showSuccess() {
+      document.getElementById('form-area').style.display = 'none';
+      document.getElementById('success-area').style.display = 'flex';
+      spawnHearts();
+    }
+  </script>
+
+</body>
+</html>
